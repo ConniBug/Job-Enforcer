@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const {getJobs} = require("../../JobHandler");
+const { jobs} = require("../../modules/Storage");
 
 const data = new SlashCommandBuilder()
     .setName('jobs')
@@ -7,11 +7,18 @@ const data = new SlashCommandBuilder()
 ;
 
 async function execute(interaction) {
-    let jobs = getJobs(interaction.user.id);
-    if(jobs.length === 0) {
+    let maidJobs = [];
+    for (const [jobId, jobData] of jobs) {
+        jobData.jobId = jobId;
+        if(jobData.maidId === interaction.user.id) {
+            maidJobs.push(jobData);
+        }
+    }
+
+    if(maidJobs.length === 0) {
         return await interaction.reply('You have no jobs!');
     }
-    let jobList = jobs.map(job => {
+    let jobList = maidJobs.map(job => {
         return `**ID:** ${job.jobId}\n**Title:** ${job.title}\n**Status:** ${job.status}\n\n`;
     });
 

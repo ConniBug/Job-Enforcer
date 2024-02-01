@@ -2,7 +2,6 @@ const { get_maid_by_manager } = require('../../modules/Storage');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 const { newJob } = require('../../JobHandler');
-const {Client: client} = require("discord.js");
 
 const data = new SlashCommandBuilder()
     .setName('task')

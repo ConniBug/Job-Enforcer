@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { displayJob, jobExists } = require('../../JobHandler');
+const { displayJob } = require('../../JobHandler');
+const { jobs } = require('../../modules/Storage');
 
 const data = new SlashCommandBuilder()
     .setName('show-job')
@@ -14,7 +15,7 @@ const data = new SlashCommandBuilder()
 
 async function execute(interaction) {
     const jobId = interaction.options.getString('job-id');
-    if(!jobExists(jobId))
+    if(!jobs.has(jobId))
         return await interaction.reply(`Job with ID ${jobId} does not exist!`);
 
     displayJob(jobId);
