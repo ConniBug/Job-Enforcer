@@ -22,7 +22,7 @@ module.exports.saveJobsToDisk = async () => {
         jobsArray.push(jobData);
     }
     const fs = require('fs');
-    fs.writeFile('../jobs.json', JSON.stringify(jobsArray), (err) => {
+    fs.writeFile('./jobs.json', JSON.stringify(jobsArray), (err) => {
         if(err) {
             console.log(err);
         }
@@ -43,7 +43,7 @@ module.exports.new_maid = function (maidId, managerId) {
     });
 
     // save to file
-    fs.writeFile('../maids.json', JSON.stringify(maids), (err) => {
+    fs.writeFile('./maids.json', JSON.stringify(maids), (err) => {
         if(err)
             console.log(err);
 

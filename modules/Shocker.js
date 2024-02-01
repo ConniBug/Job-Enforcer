@@ -46,12 +46,12 @@ module.exports.stopShockJob = function (intervalId) {
 }
 
 module.exports.shock = async function ({intensity, duration, notificationChannelID, intervalId }) {
-    if(intensity.includes('-')) {
+    if(typeof intensity === "string" && intensity.includes('-')) {
         intensity = handleRandom(intensity);
     }
     intensity = parseInt(intensity);
 
-    if(duration.includes('-')) {
+    if(typeof intensity === "string" && duration.includes('-')) {
         duration = handleRandom(duration);
     } duration = parseInt(duration);
 

@@ -1,11 +1,13 @@
 const {jobs, get_manager_by_maid, saveJobsToDisk} = require("./Storage");
 const client = require("./client");
+const { shock } = require("./Shocker");
 
 async function failedJob(jobId) {
     let job = jobs.get(jobId);
     if(!job) {
         return;
     }
+    console.log(`Job '${job.title}' has failed.`);
 
     let guild = await client.guilds.cache.get(`${process.env.GUILD_ID}`);
     if(!guild)
@@ -16,11 +18,31 @@ async function failedJob(jobId) {
 
     let maid = await guild.members.cache.get(`${job.maidId}`);
 
-    // manager.send(`Job '${job.title}' has failed.`);
-    // maid.send(`Job '${job.title}' has failed.`);
+    manager.send(`Job '${job.title}' has failed.`);
+    maid.send(`Job '${job.title}' has failed.`);
 
-    // job.status = 'done';
-    await saveJobsToDisk();
+
+    if(job.warning === 'lightShock') {
+        for(let i = 0; i < 10; ++i) {
+            await shock({
+                intensity: 2.5,
+                duration: 100,
+                notificationChannelID: process.env.NOTIFICATION_CHANNEL_ID
+            });
+            await new Promise(resolve => setTimeout(resolve, 250));
+        }
+    }
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
+    await shock({
+        intensity: job.shockIntensity,
+        duration: job.shockDuration,
+        notificationChannelID: process.env.NOTIFICATION_CHANNEL_ID
+    });
+
+    job.status = 'done';
+
+    saveJobsToDisk();
 }
 
 function handleJobs() {
@@ -55,12 +77,12 @@ function handleJobs() {
                 break;
         }
         let timeLeft = deadlineMs - (Date.now() - jobData.startTimestamp);
-        console.log(`${timeLeft}ms`);
+        console.log(`${timeLeft / 1000}s`);
 
         if(timeLeft <= 0) {
             failedJob(jobId)
         }
     }
 }
-setInterval(handleJobs, 10000);
+setInterval(handleJobs, 1000);
 handleJobs();

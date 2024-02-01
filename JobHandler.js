@@ -170,6 +170,13 @@ module.exports.handeMaidJobAcknowledged = async (jobId, interaction) => {
             ephemeral: true
         });
     }
+    if(job.status === 'done') {
+        return await interaction.reply({
+            content: `Job '${job.title}' is already done.`,
+            ephemeral: true
+        });
+    }
+
     let guild = await client.guilds.cache.get(process.env.GUILD_ID);
 
     let managerId = get_manager_by_maid(job.maidId);
@@ -197,6 +204,12 @@ module.exports.handleMaidDoneButton = async (jobId, interaction) => {
     if(!job) {
         return await interaction.reply({
             content: `Error: No job with ID ${jobId} found.`,
+            ephemeral: true
+        });
+    }
+    if(job.status === 'done') {
+        return await interaction.reply({
+            content: `Job ${job.title}' is already done.`,
             ephemeral: true
         });
     }
@@ -363,6 +376,13 @@ module.exports.handleImageApproval = async (jobId, interaction) => {
             ephemeral: true
         });
     }
+    if(job.status === 'done') {
+        return await interaction.reply({
+            content: `Job ${job.title}' is already done.`,
+            ephemeral: true
+        });
+    }
+
     let guild = await client.guilds.cache.get(process.env.GUILD_ID);
 
     let manager = await guild.members.cache.get(`${get_manager_by_maid(job.maidId)}`);
@@ -389,6 +409,13 @@ module.exports.handleImageDenial = async (jobId, interaction) => {
             ephemeral: true
         });
     }
+    if(job.status === 'done') {
+        return await interaction.reply({
+            content: `Job ${job.title}' is already done.`,
+            ephemeral: true
+        });
+    }
+
     let guild = await client.guilds.cache.get(process.env.GUILD_ID);
 
     let manager = await guild.members.cache.get(`${get_manager_by_maid(job.maidId)}`);
@@ -409,8 +436,8 @@ module.exports.handleImageDenial = async (jobId, interaction) => {
 
     // TODO: Add warning logic etc
 
-    job.status = 'active';
-    await saveJobsToDisk();
+    job.status = 'done';
+    saveJobsToDisk();
 
     await Shocker.shock({
         intensity: job.shockIntensity,
@@ -425,7 +452,7 @@ async function newJob(jobData) {
 
     displayJob(jobId);
 
-    await saveJobsToDisk();
+    saveJobsToDisk();
 
     return jobId;
 }
