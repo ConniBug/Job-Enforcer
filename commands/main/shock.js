@@ -56,6 +56,7 @@ async function execute(interaction) {
             duration,
             notificationChannelID: interaction.channel.id,
             timeBetweenShocks,
+            repeats
         });
 
         await interaction.reply(`[${jobId}] - Shock ${intensity}% for ${duration}ms ${repeats} times over ${repeatsTimespan} minutes. (${shocksPerMinute} spm)`);

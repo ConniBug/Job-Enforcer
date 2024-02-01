@@ -12,11 +12,15 @@ function handleRandom(input) {
 // hashmap
 let shockJobs = new Map();
 
-module.exports.newShockJob = function ({intensity, duration, notificationChannelID, timeBetweenShocks}) {
+module.exports.newShockJob = function ({intensity, duration, notificationChannelID, timeBetweenShocks, repeats}) {
     let intervalId = crypto.randomUUID();
-    let elapsed = 0;
+    let cnt = 0;
     let interval = setInterval(async () => {
-        elapsed += timeBetweenShocks / 1000;
+        ++cnt;
+        if(cnt > repeats) {
+            clearInterval(interval);
+            return;
+        }
         await module.exports.shock({
             intensity,
             duration,
@@ -41,7 +45,7 @@ module.exports.stopShockJob = function (intervalId) {
     return shockJobs.delete(intervalId);
 }
 
-module.exports.shock = async function ({intensity, duration, repeats, repeatsTimespan, notificationChannelID, intervalId }) {
+module.exports.shock = async function ({intensity, duration, notificationChannelID, intervalId }) {
     if(intensity.includes('-')) {
         intensity = handleRandom(intensity);
     }
@@ -70,7 +74,7 @@ module.exports.shock = async function ({intensity, duration, repeats, repeatsTim
             "Duration": `${duration}`,
             "Apikey": process.env.SHOCK_API_KEY,
 
-            "Op": "1",
+            "Op": "0",
         })
     });
     if(!response.ok) {
