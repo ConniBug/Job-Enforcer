@@ -140,22 +140,22 @@ async function displayJob(jobId) {
     const response = await maid.send(options);
 
     try {
-        const confirmation = await response.awaitMessageComponent({dispose: true, time: 60000});
+        const confirmation = await response.awaitMessageComponent({ dispose: true });
         let pressed = confirmation.customId;
         if(pressed === 'maidDoneButton') {
+            console.log('Maid Done Button Pressed');
+            response.edit({
+                components: [],
+            });
 
         } else if(pressed === 'maidEnquiryButton') {
-
+            console.log('Maid Enquiry Button Pressed');
         } else {
             console.log('Error: Unknown button pressed.');
         }
     } catch (error) {
         console.log('Error: No button pressed.');
     }
-
-    response.edit({
-        components: [],
-    });
 
     return response;
 }

@@ -47,8 +47,9 @@ async function failedJob(jobId) {
 
 function handleJobs() {
     for (const [jobId, jobData] of jobs) {
-        if(!jobData.startTimestamp)
-            console.log('Job not started.');
+        if(!jobData.startTimestamp) {
+            continue;
+        }
         if(jobData.status === 'done')
             continue;
         if(jobData.deadline === 'infinite')

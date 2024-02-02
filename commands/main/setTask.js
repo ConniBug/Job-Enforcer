@@ -33,7 +33,7 @@ const data = new SlashCommandBuilder()
     .addStringOption(option =>
         option
             .setName('task-deadline')
-            .setDescription('Duration of the task in mins. (Default: `-1` for unlimited)')
+            .setDescription('Deadline of the task. (Specify units: 1d, 1h, 1m, 1s. Default: infinite)')
             .setRequired(false)
     )
     .addStringOption(option =>
@@ -88,6 +88,8 @@ async function execute(interaction) {
         return;
     }
     let task = {
+        maidId,
+
         title: interaction.options.getString('title'),
         description: interaction.options.getString('desc') || '',
         deadline: interaction.options.getString('task-deadline') || '-1',
@@ -96,10 +98,17 @@ async function execute(interaction) {
         confirmationType: interaction.options.getString('confirmation-type') || 'maidConfirmed',
         shockIntensity: interaction.options.getString('shock-intensity'),
         shockDuration: interaction.options.getString('shock-duration'),
+
+        // TODO: Add notification frequency and reminder
         notificationFrequency: interaction.options.getString('notification-frequency') || '30',
         reminder: interaction.options.getString('reminder') || '10',
-        maidId,
     }
+    let units = ['s', 'm', 'h', 'd'];
+    if(units.indexOf(task.deadline.substr(task.deadline.length - 1, 1)) === -1) {
+        await interaction.reply('Invalid deadline unit.');
+        return;
+    }
+
     task.status = task.startMethod === 'onCreation' ? 'active' : 'pendingAcknowledgement';
 
     if(task.deadline === '-1')
