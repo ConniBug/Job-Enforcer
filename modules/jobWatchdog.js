@@ -16,6 +16,10 @@ async function failedJob(jobId) {
     if(!manager)
         return;
 
+    job.status = 'done';
+
+    saveJobsToDisk();
+
     let maid = await guild.members.cache.get(`${job.maidId}`);
 
     manager.send(`Job '${job.title}' has failed.`);
@@ -39,10 +43,6 @@ async function failedJob(jobId) {
         duration: job.shockDuration,
         notificationChannelID: process.env.NOTIFICATION_CHANNEL_ID
     });
-
-    job.status = 'done';
-
-    saveJobsToDisk();
 }
 
 function handleJobs() {
@@ -78,7 +78,9 @@ function handleJobs() {
                 break;
         }
         let timeLeft = deadlineMs - (Date.now() - jobData.startTimestamp);
-        console.log(`${timeLeft / 1000}s`);
+        timeLeft += jobData.extensionMs || 0;
+
+        console.log(`${timeLeft / 1000}s with ${jobData.extensionMs / 1000}s extension`);
 
         if(timeLeft <= 0) {
             failedJob(jobId)

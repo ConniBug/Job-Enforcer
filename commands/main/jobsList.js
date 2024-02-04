@@ -18,6 +18,7 @@ async function execute(interaction) {
     if(maidJobs.length === 0) {
         return await interaction.reply('You have no jobs!');
     }
+
     let jobList = maidJobs.map(job => {
         return `**ID:** ${job.jobId}\n**Title:** ${job.title}\n**Status:** ${job.status}\n\n`;
     });
